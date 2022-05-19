@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<ContractorMod>
+    <!--
+    This file is used only when creating new savegame.
+    Following changes can be made here:
+     - You can set from 2 to 8 workers by changing numWorkers value.
+     - Worker name can be changed.
+     - Worker gender can be male or female
+     - Worker playerColorIndex can be set from 1 to 20 (being colors available when starting a new game)
+       - white / grey   : 1 - 4
+       - blue / navy    : 5 - 8
+       - green          : 9 - 12
+       - pink / red     : 13 - 16
+       - yellow / brown : 17 - 20
+     - Worker playerBodyIndex can be set from 1 to 4
+       - gender = male and playerBodyIndex 1 - 4 => Character1 to Character4
+       - gender = female and playerBodyIndex 1 - 4 => Character5 to Character8
+     - Worker playerHairIndex can be set from 1 to 4
+     - Worker playerHatIndex can be set from 0 to 109
+     - Worker playerJacketIndex can be set from 0 to 1
+       - None : 0
+       - Vest : 1
+     - Worker playerAccessoryIndex can be set from 0 to 1
+       - None : 0
+       - Sunglasses : 1
+     - enableSeveralDrivers: 
+       -true  => several characters can drive the same vehicle (was useful when no PassengerMod spec, should not be changed anymore)
+       -false => only one character can drive a vehicle
+     - displayOnFootWorker:
+       -true  => display pedestrian worker
+       -false => only show worker when inside a vehicle
+    If you want to modify some element on a savegame, you can edit similar file in corresponding savegame directory
+    -->
+    <workers numWorkers="4" enableSeveralDrivers="true" displayOnFootWorker="true">
+        <worker name="Alex">
+            <style filename="dataS/character/humans/player/player01.xml" beardConfig="0" bottomConfig="1" bottomConfigColor="5" faceConfig="1" faceConfigColor="1" footwearConfig="1" footwearConfigColor="2" glassesConfig="0" glovesConfig="0" hairStyleConfig="6" hairStyleConfigColor="6" headgearConfig="0" mustacheConfig="0" onepieceConfig="0" topConfig="1" topConfigColor="65" facegearConfig="0"/>
+        </worker>
+        <worker name="Brenda">
+            <style filename="dataS/character/humans/player/player02.xml" beardConfig="0" bottomConfig="1" bottomConfigColor="5" faceConfig="4" faceConfigColor="1" footwearConfig="1" footwearConfigColor="2" glassesConfig="0" glovesConfig="0" hairStyleConfig="16" hairStyleConfigColor="6" headgearConfig="0" mustacheConfig="0" onepieceConfig="0" topConfig="1" topConfigColor="65" facegearConfig="0"/>
+        </worker>
+        <worker name="Chris">
+            <style filename="dataS/character/humans/player/player01.xml" beardConfig="1" bottomConfig="1" bottomConfigColor="5" faceConfig="3" faceConfigColor="1" footwearConfig="1" footwearConfigColor="2" glassesConfig="0" glovesConfig="0" hairStyleConfig="16" hairStyleConfigColor="6" headgearConfig="0" mustacheConfig="0" onepieceConfig="0" topConfig="1" topConfigColor="65" facegearConfig="0"/>
+        </worker>
+        <worker name="David">
+            <style filename="dataS/character/humans/player/player01.xml" beardConfig="0" bottomConfig="1" bottomConfigColor="2" faceConfig="6" faceConfigColor="1" footwearConfig="1" footwearConfigColor="2" glassesConfig="1" glovesConfig="0" hairStyleConfig="16" hairStyleConfigColor="6" headgearConfig="0" mustacheConfig="0" onepieceConfig="0" topConfig="1" topConfigColor="65" facegearConfig="0"/>
+        </worker>
+        <worker name="Ed" gender="male" playerColorIndex="4" playerBodyIndex="1" playerHatIndex="0" playerAccessoryIndex="0" playerHairIndex="1" playerJacketIndex="0" />
+        <worker name="Frank" gender="male" playerColorIndex="5" playerBodyIndex="1" playerHatIndex="0" playerAccessoryIndex="0" playerHairIndex="1" playerJacketIndex="0" />
+        <worker name="Gary" gender="male" playerColorIndex="6" playerBodyIndex="1" playerHatIndex="0" playerAccessoryIndex="0" playerHairIndex="1" playerJacketIndex="0" />
+        <worker name="Henry" gender="male" playerColorIndex="7" playerBodyIndex="1" playerHatIndex="0" playerAccessoryIndex="0" playerHairIndex="1" playerJacketIndex="0" />
+    </workers>
+    <displaySettings>
+        <!-- 
+          You can change here the position and size of current character name displayed on screen
+          Default values used on FS17: x="0.9828" y="0.45" size="0.024"
+        -->
+        <characterName x="0.9828" y="0.90" size="0.024"/>
+        <playerName displayPlayerNames="true"/>
+    </displaySettings>
+    <passengerSeats displayWarning="false">
+        <!-- mods can be added here so they won't be overwritten if ContractorMod is updated -->
+        <Passenger vehiclesName="$moddir$FS22_JohnDeere8r2016/series8R.xml" seatIndex="1" x="0.5494" y="2.3036" z="-1.3561" rx="0" ry="0" rz="0"/>
+    </passengerSeats>
+</ContractorMod>
