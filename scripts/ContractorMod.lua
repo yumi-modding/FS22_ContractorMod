@@ -1672,7 +1672,8 @@ function ContractorMod:onPlayerEnter(isControlling)
       print("\nworker:getStyle()")
       -- DebugUtil.printTableRecursively(ContractorMod.workers[ContractorMod.currentID].playerStyle, " ", 1, 2)
     end
-    ContractorMod.workers[ContractorMod.currentID].playerStyle:copyFrom(g_currentMission.player:getStyle())
+    -- ContractorMod.workers[ContractorMod.currentID].playerStyle:copyFrom(g_currentMission.player:getStyle())
+    g_currentMission.player:getStyle():copyFrom(ContractorMod.workers[ContractorMod.currentID])
   end
 end
 Player.onEnter = Utils.appendedFunction(Player.onEnter, ContractorMod.onPlayerEnter)
