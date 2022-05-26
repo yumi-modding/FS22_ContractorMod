@@ -30,6 +30,8 @@ Not working/known issues:
  - [ ] Train/horse not tested yet
  - [ ] Display other characters names like in MP game
  - [ ] Debug command to ease passenger positioning in vehicles
+ - [ ] First character should have selected player style when starting a new game instead of default style
+
 
 You can open issues based on your tests but please be the more precise possible so I can reproduce and understand it. You can inform if you find things working correctly that I did not tested yet.
 Thanks for your support and help
