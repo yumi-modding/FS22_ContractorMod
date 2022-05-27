@@ -14,6 +14,7 @@ Working as of May 19th:
  - [x] Compatibility with FollowMe mod
  - [x] Customizing/selling vehicle and returning hired vehicle with character inside
  - [x] Customizing character styles by editing ContractorMod.xml file in modSettings or savegame dir
+ - [x] Change character name by using wardrobe screen
  
 Partially working:  
  - [ ] Characters style can quickly mix up
