@@ -1025,6 +1025,24 @@ function ContractorMod:ReplaceOnPlayerStyleChanged(superFunc, style, userId)
 end
 Enterable.onPlayerStyleChanged = Utils.overwrittenFunction(Enterable.onPlayerStyleChanged, ContractorMod.ReplaceOnPlayerStyleChanged)
 
+-- Display character name in wardrobe screen
+function ContractorMod:onOpenWardrobeScreen()
+  if ContractorMod.debug then print("ContractorMod:onOpenWardrobeScreen ") end
+
+  --print("player"..tostring(g_currentMission.player))
+  --print("model "..tostring(g_currentMission.player.model))
+  --print("style "..tostring(g_currentMission.player.model.style))
+  --DebugUtil.printTableRecursively(g_currentMission.player.model, " ", 1, 2)
+  --g_wardrobeScreen.isNewCharacter = false
+  g_currentMission.playerNickname = ContractorMod.workers[ContractorMod.currentID].name
+end
+ShopOthersFrame.onOpenWardrobeScreen = Utils.prependedFunction(ShopOthersFrame.onOpenWardrobeScreen, ContractorMod.onOpenWardrobeScreen)
+
+-- Change character name from wardrobe screen player nickname
+function ContractorMod:setPlayerNickname(player, nickname, userId, noEventSend)
+  ContractorMod.workers[ContractorMod.currentID].name = nickname
+end
+FSBaseMission.setPlayerNickname = Utils.prependedFunction(FSBaseMission.setPlayerNickname, ContractorMod.setPlayerNickname)
 -- @doc Prevent to replace driver character when activating a worker
 function ContractorMod:ReplaceSetRandomVehicleCharacter()
   if ContractorMod.debug then print("ContractorMod:ReplaceSetRandomVehicleCharacter") end
