@@ -16,14 +16,14 @@ Working as of May 19th:
  - [x] Customizing character styles by editing ContractorMod.xml file in modSettings or savegame dir
  - [x] Change character name by using wardrobe screen
  - [x] First character should have selected player style when starting a new game instead of default style
- 
-Partially working:  
- - [ ] Characters style can quickly mix up
- - [ ] Several characters can get the same style after performing several enter/switch vehicle scenarios
  - [x] Using wardrobe to change each character style
 
+Partially working:  
+ - [x] Characters style can quickly mix up
+ - [x] Several characters can get the same style after performing several enter/switch vehicle scenarios
+
 Not working/known issues:  
- - [ ] Changing character style by using wardrobe not only change current character but can also impact others
+ - [x] Changing character style by using wardrobe not only change current character but can also impact others
  - [ ] Display characters not in a vehicle disabled for now (can crash the game quickly) 
  - [ ] Display characters on map not implemented
  - [ ] Configure all basegame vehicles (+ some mods) to accept passengers

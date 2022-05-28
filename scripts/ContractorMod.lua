@@ -1030,17 +1030,25 @@ end
 Enterable.onPlayerStyleChanged = Utils.overwrittenFunction(Enterable.onPlayerStyleChanged, ContractorMod.ReplaceOnPlayerStyleChanged)
 
 -- Display character name in wardrobe screen
-function ContractorMod:onOpenWardrobeScreen()
-  if ContractorMod.debug then print("ContractorMod:onOpenWardrobeScreen ") end
+function ContractorMod:beforeOnOpenWardrobeScreen()
+  if ContractorMod.debug then print("ContractorMod:beforeOnOpenWardrobeScreen ") end
 
   --print("player"..tostring(g_currentMission.player))
   --print("model "..tostring(g_currentMission.player.model))
   --print("style "..tostring(g_currentMission.player.model.style))
   --DebugUtil.printTableRecursively(g_currentMission.player.model, " ", 1, 2)
-  --g_wardrobeScreen.isNewCharacter = false
+  g_currentMission.player.model.style:copyFrom(ContractorMod.workers[ContractorMod.currentID].playerStyle)
   g_currentMission.playerNickname = ContractorMod.workers[ContractorMod.currentID].name
 end
-ShopOthersFrame.onOpenWardrobeScreen = Utils.prependedFunction(ShopOthersFrame.onOpenWardrobeScreen, ContractorMod.onOpenWardrobeScreen)
+ShopOthersFrame.onOpenWardrobeScreen = Utils.prependedFunction(ShopOthersFrame.onOpenWardrobeScreen, ContractorMod.beforeOnOpenWardrobeScreen)
+
+-- Update character when opening wardrobe screen
+function ContractorMod:appOnOpenWardrobeScreen()
+  if ContractorMod.debug then print("ContractorMod:appOnOpenWardrobeScreen ") end
+  g_wardrobeScreen.temporaryPlayerStyle:copyFrom(ContractorMod.workers[ContractorMod.currentID].playerStyle)
+  g_wardrobeScreen:updateCharacter()
+end
+ShopOthersFrame.onOpenWardrobeScreen = Utils.appendedFunction(ShopOthersFrame.onOpenWardrobeScreen, ContractorMod.appOnOpenWardrobeScreen)
 
 -- Change character name from wardrobe screen player nickname
 function ContractorMod:setPlayerNickname(player, nickname, userId, noEventSend)
