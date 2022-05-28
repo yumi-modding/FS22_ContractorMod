@@ -22,8 +22,6 @@ function ContractorModWorker:new(name, index, workerStyle)
   setmetatable(self, ContractorModWorker_mt);
 
   self.name = name
-  self.nickname = name --g_settingsNickname
-  -- g_settingsNickname = name
   self.currentVehicle = nil
   self.isPassenger = false    -- to be removed when all code clean
   self.isNewPassenger = false -- to replace isPassenger waiting code cleaning
