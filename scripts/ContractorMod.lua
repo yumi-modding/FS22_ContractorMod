@@ -316,19 +316,18 @@ function ContractorMod:init()
     if not self:initFromParam() or #self.workers <= 0 then
       -- default values
       if ContractorMod.debug then print("ContractorMod: No savegame: set default values") end
-      local farmId = 1
       local workerStyle = g_currentMission.player:getStyle()
       workerStyle.playerColorIndex = 0;
-      local worker = ContractorModWorker:new("Alex", 1, "male", workerStyle, farmId, true)
+      local worker = ContractorModWorker:new("Alex", 1, workerStyle)
       table.insert(self.workers, worker)
       workerStyle.playerColorIndex = 1;
-      worker = ContractorModWorker:new("Brenda", 2, "female", workerStyle, farmId, true)
+      worker = ContractorModWorker:new("Brenda", 2, workerStyle)
       table.insert(self.workers, worker)
       workerStyle.playerColorIndex = 2;
-      worker = ContractorModWorker:new("Chris", 3, "male", workerStyle, farmId, true)
+      worker = ContractorModWorker:new("Chris", 3, workerStyle)
       table.insert(self.workers, worker)
       workerStyle.playerColorIndex = 3;
-      worker = ContractorModWorker:new("David", 4, "male", workerStyle, farmId, true)
+      worker = ContractorModWorker:new("David", 4, workerStyle)
       table.insert(self.workers, worker)
       self.numWorkers = 4
       self.enableSeveralDrivers = true
@@ -470,8 +469,7 @@ function ContractorMod:initFromSave()
               playerColorIndex = 0
             end
             workerStyle.playerColorIndex = playerColorIndex
-            local farmId = 1
-            local worker = ContractorModWorker:new(workerName, i, workerStyle, farmId, self.displayOnFootWorker)
+            local worker = ContractorModWorker:new(workerName, i, workerStyle)
             if ContractorMod.debug then print(xmlFile:getString(key.."#position")) end
             local x, y, z = string.getVector(xmlFile:getString(key.."#position"));
             if ContractorMod.debug then print("x "..tostring(x)) end
@@ -575,7 +573,13 @@ function ContractorMod:initFromParam()
             local workerName = xmlFile:getString(key.."#name");
             if ContractorMod.debug then print(workerName) end
             local workerStyle = PlayerStyle.new()
-            workerStyle:loadFromXMLFile(xmlFile, key .. ".style")
+            if i < 2 then
+              -- First character get configured style and name for new game
+              workerStyle = g_currentMission.player:getStyle()
+              workerName = g_currentMission.playerNickname
+            else
+              workerStyle:loadFromXMLFile(xmlFile, key .. ".style")
+            end
             local playerColorIndex = xmlFile:getInt(key .. string.format("#playerColorIndex"));
             if playerColorIndex == nil then
               playerColorIndex = 0
@@ -583,7 +587,7 @@ function ContractorMod:initFromParam()
             workerStyle.playerColorIndex = playerColorIndex
             if ContractorMod.debug then print(workerName) end
             local farmId = 1
-            local worker = ContractorModWorker:new(workerName, i, workerStyle, farmId,  self.displayOnFootWorker)
+            local worker = ContractorModWorker:new(workerName, i, workerStyle)
             if ContractorMod.debug then print(xmlFile:getString(key.."#position")) end
             local x, y, z = string.getVector(xmlFile:getString(key.."#position"));
             if ContractorMod.debug then print("x "..tostring(x)) end
@@ -1040,7 +1044,10 @@ ShopOthersFrame.onOpenWardrobeScreen = Utils.prependedFunction(ShopOthersFrame.o
 
 -- Change character name from wardrobe screen player nickname
 function ContractorMod:setPlayerNickname(player, nickname, userId, noEventSend)
-  ContractorMod.workers[ContractorMod.currentID].name = nickname
+  if ContractorMod.debug then print("ContractorMod:setPlayerNickname "..tostring(nickname)) end
+  if ContractorMod.workers then
+    ContractorMod.workers[ContractorMod.currentID].name = nickname
+  end
 end
 FSBaseMission.setPlayerNickname = Utils.prependedFunction(FSBaseMission.setPlayerNickname, ContractorMod.setPlayerNickname)
 -- @doc Prevent to replace driver character when activating a worker
@@ -1691,7 +1698,7 @@ function ContractorMod:onPlayerEnter(isControlling)
       -- DebugUtil.printTableRecursively(ContractorMod.workers[ContractorMod.currentID].playerStyle, " ", 1, 2)
     end
     -- ContractorMod.workers[ContractorMod.currentID].playerStyle:copyFrom(g_currentMission.player:getStyle())
-    g_currentMission.player:getStyle():copyFrom(ContractorMod.workers[ContractorMod.currentID])
+    g_currentMission.player:getStyle():copyFrom(ContractorMod.workers[ContractorMod.currentID].playerStyle)
   end
 end
 Player.onEnter = Utils.appendedFunction(Player.onEnter, ContractorMod.onPlayerEnter)
