@@ -15,11 +15,12 @@ Working as of May 19th:
  - [x] Customizing/selling vehicle and returning hired vehicle with character inside
  - [x] Customizing character styles by editing ContractorMod.xml file in modSettings or savegame dir
  - [x] Change character name by using wardrobe screen
+ - [x] First character should have selected player style when starting a new game instead of default style
  
 Partially working:  
  - [ ] Characters style can quickly mix up
  - [ ] Several characters can get the same style after performing several enter/switch vehicle scenarios
- - [ ] Using wardrobe to change each character style
+ - [x] Using wardrobe to change each character style
 
 Not working/known issues:  
  - [ ] Changing character style by using wardrobe not only change current character but can also impact others
@@ -31,7 +32,6 @@ Not working/known issues:
  - [ ] Train/horse not tested yet
  - [ ] Display other characters names like in MP game
  - [ ] Debug command to ease passenger positioning in vehicles
- - [ ] First character should have selected player style when starting a new game instead of default style
 
 
 You can open issues based on your tests but please be the more precise possible so I can reproduce and understand it. You can inform if you find things working correctly that I did not tested yet.
