@@ -24,7 +24,7 @@ Partially working:
 
 Not working/known issues:  
  - [x] Changing character style by using wardrobe not only change current character but can also impact others
- - [ ] Display characters not in a vehicle disabled for now (can crash the game quickly) 
+ - [x] Display characters not in a vehicle disabled for now (can crash the game quickly) 
  - [ ] Display characters on map not implemented
  - [ ] Configure all basegame vehicles (+ some mods) to accept passengers
  - [ ] Compatibility with Courseplay mod not tested yet

@@ -34,18 +34,28 @@ function ContractorModWorker:new(name, index, workerStyle)
   if farm ~= nil then
     farmId = farm.farmId
   end
+
+  local userId = user:getId()
+  print("create player "..tostring(#g_currentMission.players))
+  -- g_currentMission.playerInfoStorage:setPlayerStyle(userId, workerStyle)
+  g_currentMission:createPlayer(connection, false, farmId, userId)
+  user:setState(FSBaseMission.USER_STATE_INGAME)
+
+
   -- p.model.style.playerName = name
   self.mapHotSpot = nil
   self.color = g_playerColors[(workerStyle.playerColorIndex + 1)].value
   if g_currentMission.controlPlayer and g_currentMission.player ~= nil then
-    self.x, self.y, self.z = getWorldTranslation(g_currentMission.player.rootNode);
+    -- self.x, self.y, self.z = getWorldTranslation(g_currentMission.player.rootNode);
+    self.x, self.y, self.z, self.rotY = g_currentMission.player:getPositionData()
     self.dx, self.dy, self.dz = localDirectionToWorld(g_currentMission.player.rootNode, 0, 0, 1);
     self.rotX = 0.;
-    self.rotY = 0.73;
+    -- self.rotY = 0.73;
     self.x = self.x + (1 * index)
     self.playerStyle = PlayerStyle.new()
     self.playerStyle:copyFrom(workerStyle)
     self.farmId = farmId
+    self.player = nil
   end
   return self
 end
@@ -103,41 +113,40 @@ function ContractorModWorker:beforeSwitch(noEventSend)
       -- source worker is passenger in a vehicle
     else
       -- source worker is not in a vehicle
-      self.x, self.y, self.z = getWorldTranslation(g_currentMission.player.rootNode);
+      self.x, self.y, self.z, self.rotY = g_currentMission.player:getPositionData()
       if ContractorModWorker.debug then print("ContractorModWorker: "..tostring(self.x)..", "..tostring(self.y)..", "..tostring(self.z)) end
       self.rotX = g_currentMission.player.rotX;
-      self.rotY = g_currentMission.player.rotY;
-      if self.displayOnFoot then
-        self.player.isEntered = false
-        if noEventSend == nil or noEventSend == false then
-          -- print("set visible 1: "..self.name)
-          self.player:setVisibility(true)
-        end
-        -- if ContractorModWorker.debug then print("ContractorModWorker: moveTo "..tostring(self.player.model.style.playerName)); end
-
-        local terrainHeight = getTerrainHeightAtWorldPos(g_currentMission.terrainRootNode, self.x, 300, self.z)
-        -- self.y = math.max(terrainHeight + 0.1, self.y + 0.9)
-      
-        -- self.player:moveRootNodeToAbsolute(self.x, self.y, self.z)
-        
-        -- local x, y, z = getWorldTranslation(spawnPoint)
-        -- local dx, _, dz = localDirectionToWorld(spawnPoint, 0, 0, -1)
-        local dx, _, dz = localDirectionToWorld(g_currentMission.player.rootNode, 0, 0, -1)
-        local ry = MathUtil.getYRotationFromDirection(dx, dz)
-        local y = math.max(self.y, getTerrainHeightAtWorldPos(g_currentMission.terrainRootNode, self.x, 0, self.z) + 0.2)
-
-        self.player:moveTo(self.x, y, self.z, true, true)
-        self.player:setRotation(0, ry)
-        --[[
-        self.player.baseInformation.isOnGround = true
-        self.player:moveToAbsoluteInternal(self.x, self.y, self.z)
-      
-        local dx, _, dz = localDirectionToWorld(g_currentMission.player.rootNode, 0, 0, -1)  --]]
-        self.rotY = MathUtil.getYRotationFromDirection(dx, dz)
-      
-        setRotation(self.player.graphicsRootNode, 0, self.rotY + math.rad(180.0), 0)
-        setRotation(self.player.cameraNode, self.rotX, self.rotY, 0)
+      -- self.rotY = g_currentMission.player.rotY;
+      self.player.isEntered = false
+      if noEventSend == nil or noEventSend == false then
+        -- print("set visible 1: "..self.name)
+        self.player:setVisibility(true)
       end
+      -- if ContractorModWorker.debug then print("ContractorModWorker: moveTo "..tostring(self.player.model.style.playerName)); end
+
+      local terrainHeight = getTerrainHeightAtWorldPos(g_currentMission.terrainRootNode, self.x, 300, self.z)
+      -- self.y = math.max(terrainHeight + 0.1, self.y + 0.9)
+    
+      -- self.player:moveRootNodeToAbsolute(self.x, self.y, self.z)
+      self.player:moveTo(self.x, self.y, self.z, true, true)
+      
+      -- local x, y, z = getWorldTranslation(spawnPoint)
+      -- local dx, _, dz = localDirectionToWorld(spawnPoint, 0, 0, -1)
+      -- local dx, _, dz = localDirectionToWorld(g_currentMission.player.rootNode, 0, 0, -1)
+      -- local ry = MathUtil.getYRotationFromDirection(dx, dz)
+      -- local y = math.max(self.y, getTerrainHeightAtWorldPos(g_currentMission.terrainRootNode, self.x, 0, self.z) + 0.2)
+
+      -- self.player:moveTo(self.x, y, self.z, true, true)
+      -- self.player:setRotation(0, ry)
+      --[[
+      self.player.baseInformation.isOnGround = true
+      self.player:moveToAbsoluteInternal(self.x, self.y, self.z)
+    
+      local dx, _, dz = localDirectionToWorld(g_currentMission.player.rootNode, 0, 0, -1)  --]]
+      -- self.rotY = MathUtil.getYRotationFromDirection(dx, dz)
+    
+      setRotation(self.player.graphicsRootNode, 0, self.rotY + math.rad(180.0), 0)
+      setRotation(self.player.cameraNode, self.rotX, self.rotY, 0)
     end
   else
     -- source worker is in a vehicle
@@ -152,7 +161,7 @@ function ContractorModWorker:beforeSwitch(noEventSend)
   end
 end
 
--- @doc Teleport to target worker when switching 
+-- @doc Teleport to target worker when switching
 function ContractorModWorker:afterSwitch(noEventSend)
   if ContractorModWorker.debug then print("ContractorModWorker:afterSwitch()") end
   
@@ -160,22 +169,20 @@ function ContractorModWorker:afterSwitch(noEventSend)
     -- target worker is not in a vehicle
     if g_currentMission.controlPlayer and g_currentMission.player ~= nil then
       -- if ContractorModWorker.debug then print("ContractorModWorker: moveTo "..tostring(g_currentMission.player.model.style.playerName)); end
-      setTranslation(g_currentMission.player.rootNode, self.x, self.y, self.z);
-      g_currentMission.player:moveRootNodeToAbsolute(self.x, self.y-0.2, self.z);
+      -- setTranslation(g_currentMission.player.rootNode, self.x, self.y, self.z);
+      -- g_currentMission.player:moveRootNodeToAbsolute(self.x, self.y-0.2, self.z);
+      g_currentMission.player:moveTo(self.x, self.y, self.z, true, true)
       g_currentMission.player:setRotation(self.rotX, self.rotY)
-      if self.displayOnFoot then
-        self.player.isEntered = true
-        self.player.isControlled = true
-        self.player:moveToAbsoluteInternal(0, -200, 0); -- to avoid having player at the same location than current player
-        if ContractorModWorker.debug then print("ContractorModWorker: set visible 0: "..self.name); end
-        -- TODO --self.player:setVisibility(false)
-      end
+      self.player.isEntered = true
+      self.player.isControlled = true
+      self.player:moveToAbsoluteInternal(0, -200, 0); -- to avoid having player at the same location than current player
+      if ContractorModWorker.debug then print("ContractorModWorker: set visible 0: "..self.name); end
+      -- TODO --self.player:setVisibility(false)
       if ContractorModWorker.debug then
         print("ContractorModWorker: setStyleAsync ");
         DebugUtil.printTableRecursively(self.playerStyle, " ", 1, 3)
       end
       g_currentMission.player:setStyleAsync(self.playerStyle, nil, false)
-      -- g_currentMission.playerInfoStorage:setPlayerStyle(g_currentMission.player.userId, self.playerStyle)
     end
 
   else

@@ -289,7 +289,6 @@ function ContractorMod:init()
   self.initializing = true
   self.shouldStopWorker = true      --Enable to distinguish LeaveVehicle when switchingWorker and when leaving due to player request
   self.enableSeveralDrivers = false --Should be always true when passenger works correctly
-  self.displayOnFootWorker = false
   self.switching = false
   self.passengerLeaving = false
   ContractorMod.passengerEntering = false
@@ -338,9 +337,34 @@ function ContractorMod:init()
       self.displaySettings.characterName.size = 0.024
     end
   end
-  DebugUtil.printTableRecursively(g_currentMission.players, " ", 1, 2)
+  -- DebugUtil.printTableRecursively(g_currentMission.players, " ", 1, 2)
+  -- Associate 1 player to each character and show it if needed
+  local index = 1
+  for k, p in pairs(g_currentMission.players) do
+    if p ~= nil and p.rootNode ~= g_currentMission.player.rootNode then
+        local worker = self.workers[index]
+        p.isControlled = true
+        p:moveTo(worker.x, worker.y, worker.z, true, true)
+
+        if index > 1 and worker.currentVehicle == nil then
+          p:setVisibility(true)
+          p.isEntered = false
+          -- setRotation(p.graphicsRootNode, 0, worker.rotY + math.rad(180.0), 0) -- + math.rad(120.0), 0)  -- Why 120? difference ???
+          -- setRotation(p.cameraNode, worker.rotX, worker.rotY, 0)
+        else
+          p:moveToAbsoluteInternal(0, -200, 0);
+          p:setVisibility(false)
+          p.isEntered = true
+          setRotation(p.graphicsRootNode, 0, worker.rotY + math.rad(180.0), 0) -- + math.rad(120.0), 0)  -- Why 120? difference ???
+          setRotation(p.cameraNode, worker.rotX, worker.rotY, 0)
+        end
+        p:setStyleAsync(worker.playerStyle, nil, false)
+        worker.player = p
+        index = index + 1
+    end
+  end
   if ContractorMod.debug then print("ContractorMod:init()------------") end
-  DebugUtil.printTableRecursively(self.workers, " ", 1, 3)
+  -- DebugUtil.printTableRecursively(self.workers, " ", 1, 3)
 end
 
 
@@ -449,14 +473,6 @@ function ContractorMod:initFromSave()
         numWorkers = xmlFile:getInt(xmlKey .. string.format("#numWorkers"));
         if numWorkers ~= nil then
           --print("numWorkers " .. tostring(numWorkers))
-
-          local displayOnFootWorker = xmlFile:getBool(xmlKey .. string.format("#displayOnFootWorker"));
-          if displayOnFootWorker ~= nil then
-            self.displayOnFootWorker = displayOnFootWorker
-          else
-            self.displayOnFootWorker = false
-          end
-
           for i = 1, numWorkers do
             local key = xmlKey .. string.format(".worker(%d)", i - 1)
             local workerName = xmlFile:getString(key.."#name");
@@ -560,13 +576,6 @@ function ContractorMod:initFromParam()
         local numWorkers = 0
         numWorkers = xmlFile:getInt(xmlKey .. string.format("#numWorkers"));
         if numWorkers ~= nil then
-
-          local displayOnFootWorker = xmlFile:getBool(xmlKey .. string.format("#displayOnFootWorker"));
-          if displayOnFootWorker ~= nil then
-            self.displayOnFootWorker = displayOnFootWorker
-          else
-            self.displayOnFootWorker = false
-          end
           if ContractorMod.debug then print("ContractorMod: numWorkers " .. tostring(numWorkers)) end
           for i = 1, numWorkers do
             local key = xmlKey .. string.format(".worker(%d)", i - 1)
@@ -1429,8 +1438,6 @@ function ContractorMod:onSaveCareerSavegame()
       local workerKey = rootXmlKey .. ".workers"
       xmlFile:setInt(workerKey.."#numWorkers", self.numWorkers);
       xmlFile:setBool(workerKey .."#enableSeveralDrivers", self.enableSeveralDrivers);
-      xmlFile:setBool(workerKey .."#displayOnFootWorker", self.displayOnFootWorker);
-
       for i = 1, self.numWorkers do
         local worker = self.workers[i]
         local key = string.format(rootXmlKey .. ".workers.worker(%d)", i - 1);
@@ -1498,6 +1505,12 @@ function ContractorMod:preVehicleSave(xmlFile, key, usedModNames)
   end
 end
 Vehicle.saveToXMLFile = Utils.prependedFunction(Vehicle.saveToXMLFile, ContractorMod.preVehicleSave);
+
+-- Append character name when worker is active (not really visible)
+function ContractorMod:setAIHelperName(superfunc, name)
+  self.name = name .. " (" .. ContractorMod.workers[ContractorMod.currentID].name .. ")"
+end
+AIHotspot.setAIHelperName = Utils.overwrittenFunction(AIHotspot.setAIHelperName, ContractorMod.setAIHelperName);
 
 -- @doc Draw worker name and hotspots on map
 function ContractorMod:draw()
@@ -1576,15 +1589,17 @@ Player.drawUIInfo = Utils.overwrittenFunction(Player.drawUIInfo, ContractorMod.d
 function ContractorMod:update(dt)
   -- DebugUtil.printTableRecursively(g_currentMission.player, " ", 1, 3)
   if self.workers == nil and g_currentMission.player.controllerIndex > 0 and g_currentMission.player.time > 2000 then
-    DebugUtil.printTableRecursively(g_currentMission.player, " ", 1, 3)
+    -- DebugUtil.printTableRecursively(g_currentMission.player, " ", 1, 3)
     -- default values
     self:init()
-    DebugUtil.printTableRecursively(self.workers, " ", 1, 3)
+    -- DebugUtil.printTableRecursively(self.workers, " ", 1, 3)
     local firstWorker = self.workers[self.currentID]
     if g_currentMission.player and g_currentMission.player ~= nil then
       if ContractorMod.debug then print("ContractorMod: moveToAbsolute"); end
-      setTranslation(g_currentMission.player.rootNode, firstWorker.x, firstWorker.y, firstWorker.z);
-      g_currentMission.player:moveRootNodeToAbsolute(firstWorker.x, firstWorker.y, firstWorker.z);
+      -- setTranslation(g_currentMission.player.rootNode, firstWorker.x, firstWorker.y, firstWorker.z);
+      -- g_currentMission.player:moveRootNodeToAbsolute(firstWorker.x, firstWorker.y, firstWorker.z);
+      firstWorker.x, firstWorker.y, firstWorker.z, firstWorker.rotY = g_currentMission.player:getPositionData()
+      g_currentMission.player:moveTo(firstWorker.x, firstWorker.y, firstWorker.z, true, true)
       g_currentMission.player:setRotation(firstWorker.rotX, firstWorker.rotY)
       if firstWorker.currentVehicle ~= nil then
         firstWorker:afterSwitch()
@@ -1606,9 +1621,10 @@ function ContractorMod:update(dt)
           --   worker.passengerPlace = g_currentMission.passengerPlace
           -- else
             -- not in a vehicle
-            worker.x, worker.y, worker.z = getWorldTranslation(g_currentMission.player.rootNode);
+            -- worker.x, worker.y, worker.z = getWorldTranslation(g_currentMission.player.rootNode);
+            worker.x, worker.y, worker.z, worker.rotY = g_currentMission.player:getPositionData()
             worker.rotX = g_currentMission.player.rotX
-            worker.rotY = g_currentMission.player.rotY
+            -- worker.rotY = g_currentMission.player.rotY
             worker.isPassenger = false
             worker.passengerPlace = 0
             worker.currentVehicle = nil;
@@ -1705,7 +1721,6 @@ function ContractorMod:onPlayerEnter(isControlling)
       print("\nworker:getStyle()")
       -- DebugUtil.printTableRecursively(ContractorMod.workers[ContractorMod.currentID].playerStyle, " ", 1, 2)
     end
-    -- ContractorMod.workers[ContractorMod.currentID].playerStyle:copyFrom(g_currentMission.player:getStyle())
     g_currentMission.player:getStyle():copyFrom(ContractorMod.workers[ContractorMod.currentID].playerStyle)
   end
 end
