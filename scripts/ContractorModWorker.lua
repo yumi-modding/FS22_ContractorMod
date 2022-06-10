@@ -128,7 +128,7 @@ function ContractorModWorker:beforeSwitch(noEventSend)
       -- self.y = math.max(terrainHeight + 0.1, self.y + 0.9)
     
       -- self.player:moveRootNodeToAbsolute(self.x, self.y, self.z)
-      self.player:moveTo(self.x, self.y, self.z, true, true)
+      self.player:moveTo(self.x, self.y-0.8, self.z, true, true)
       
       -- local x, y, z = getWorldTranslation(spawnPoint)
       -- local dx, _, dz = localDirectionToWorld(spawnPoint, 0, 0, -1)

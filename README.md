@@ -24,7 +24,9 @@ Partially working:
 
 Not working/known issues:  
  - [x] Changing character style by using wardrobe not only change current character but can also impact others
- - [x] Display characters not in a vehicle disabled for now (can crash the game quickly) 
+ - [x] Display characters not in a vehicle disabled for now (can crash the game quickly)
+ - [ ] On foot characters can be shaking
+ - [x] On foot characters not touching the ground
  - [ ] Display characters on map not implemented
  - [ ] Configure all basegame vehicles (+ some mods) to accept passengers
  - [ ] Compatibility with Courseplay mod not tested yet
