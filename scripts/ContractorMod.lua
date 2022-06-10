@@ -344,7 +344,7 @@ function ContractorMod:init()
     if p ~= nil and p.rootNode ~= g_currentMission.player.rootNode then
         local worker = self.workers[index]
         p.isControlled = true
-        p:moveTo(worker.x, worker.y, worker.z, true, true)
+        p:moveTo(worker.x, worker.y-0.8, worker.z, true, true)
 
         if index > 1 and worker.currentVehicle == nil then
           p:setVisibility(true)
@@ -1588,7 +1588,7 @@ Player.drawUIInfo = Utils.overwrittenFunction(Player.drawUIInfo, ContractorMod.d
 -- @doc Launch init at first call and then update workers positions and states
 function ContractorMod:update(dt)
   -- DebugUtil.printTableRecursively(g_currentMission.player, " ", 1, 3)
-  if self.workers == nil and g_currentMission.player.controllerIndex > 0 and g_currentMission.player.time > 2000 then
+  if self.workers == nil and g_currentMission.player.controllerIndex > 0 and g_currentMission.player.time > 1000 then
     -- DebugUtil.printTableRecursively(g_currentMission.player, " ", 1, 3)
     -- default values
     self:init()
