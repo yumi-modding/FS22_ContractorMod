@@ -32,7 +32,7 @@ Not working/known issues:
  - [ ] Compatibility with Courseplay mod not tested yet
  - [ ] Construction mode not tested yet
  - [ ] Train/horse not tested yet
- - [ ] Display other characters names like in MP game
+ - [x] Display other characters names like in MP game
  - [ ] Debug command to ease passenger positioning in vehicles
 
 

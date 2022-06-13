@@ -36,8 +36,7 @@ function ContractorModWorker:new(name, index, workerStyle)
   end
 
   local userId = user:getId()
-  print("create player "..tostring(#g_currentMission.players))
-  -- g_currentMission.playerInfoStorage:setPlayerStyle(userId, workerStyle)
+    -- g_currentMission.playerInfoStorage:setPlayerStyle(userId, workerStyle)
   g_currentMission:createPlayer(connection, false, farmId, userId)
   user:setState(FSBaseMission.USER_STATE_INGAME)
 

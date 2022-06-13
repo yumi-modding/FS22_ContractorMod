@@ -1578,10 +1578,33 @@ function ContractorMod:draw()
   end
 end
 
-function ContractorMod:drawUIInfo(superfunc)
-  if ContractorMod.displayPlayerNames then
-    superfunc(self)
-  end
+-- Display character name instead of player name when not i a vehicle
+function ContractorMod:drawUIInfo()
+	if ContractorMod.displayPlayerNames and self.isClient and self.isControlled and not self.isEntered and not g_gui:getIsGuiVisible() and not g_noHudModeEnabled and g_gameSettings:getValue(GameSettings.SETTING.SHOW_MULTIPLAYER_NAMES) then
+		local x, y, z = getTranslation(self.graphicsRootNode)
+		local x1, y1, z1 = getWorldTranslation(getCamera())
+		local diffX = x - x1
+		local diffY = y - y1
+		local diffZ = z - z1
+		local dist = MathUtil.vector3LengthSq(diffX, diffY, diffZ)
+
+		if dist <= 10000 then
+			y = y + self.baseInformation.tagOffset[2]
+      local currentWorker = nil
+      if ContractorMod.workers ~= nil then
+        for i = 1, #ContractorMod.workers do
+          local worker = ContractorMod.workers[i]
+          if worker.player.rootNode == self.rootNode then
+            currentWorker = worker
+            break
+          end
+        end
+      end
+			if currentWorker ~= nil then
+				Utils.renderTextAtWorldPosition(x, y, z, currentWorker.name, getCorrectTextSize(0.02), 0)
+			end
+		end
+	end
 end
 Player.drawUIInfo = Utils.overwrittenFunction(Player.drawUIInfo, ContractorMod.drawUIInfo);
 
