@@ -1749,4 +1749,9 @@ function ContractorMod:onPlayerEnter(isControlling)
 end
 Player.onEnter = Utils.appendedFunction(Player.onEnter, ContractorMod.onPlayerEnter)
 
+function ContractorMod:onItemSelectionConfirmed()
+  ContractorMod.workers[ContractorMod.currentID].playerStyle:copyFrom(self.currentPlayerStyle)
+end
+WardrobeScreen.onItemSelectionConfirmed = Utils.appendedFunction(WardrobeScreen.onItemSelectionConfirmed, ContractorMod.onItemSelectionConfirmed)
+
 addModEventListener(ContractorMod);
