@@ -1,0 +1,17 @@
+<!--
+    Simply copy this file in your mods directory to enable ContractorMod debug commands.
+    If you want to configure passenger for a new vehicle, add this kind of line to your ContractorMod.xml file.
+    Sample are already present in this file to help you understand.
+
+    <Passenger vehiclesName="$moddir$FS22_Mod_Name/FS22_Mod_File.xml" seatIndex="1" x="0.0" y="0.0" z="0.0" rx="0" ry="0" rz="0" />
+
+    Then you can enter the vehicle with 2 characters and move the passenger to position it as you want by using following keys:
+        MOVE_PASS_LEFT   : KEY_lctrl KEY_a
+        MOVE_PASS_RIGHT  : KEY_lctrl KEY_d
+        MOVE_PASS_TOP    : KEY_lctrl KEY_q
+        MOVE_PASS_BOTTOM : KEY_lctrl KEY_z
+        MOVE_PASS_FRONT  : KEY_lctrl KEY_w
+        MOVE_PASS_BACK   : KEY_lctrl KEY_s
+    Finally use this key to write in the log the line you will then replace in ContractorMod.xml file located in your mods directory.
+        DUMP_PASS        : KEY_lctrl KEY_e
+ -->

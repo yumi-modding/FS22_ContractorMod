@@ -271,14 +271,14 @@ FSBaseMission.registerActionEvents = Utils.appendedFunction(FSBaseMission.regist
 function ContractorMod:init()
   if ContractorMod.debug then print("ContractorMod:init()") end
 
-  -- Look for file FS19_ContractorMod.debug in mod directory to activate debug commands
+  -- Look for file FS22_ContractorMod.debug in mod directory to activate debug commands
   if g_currentMission ~= nil and g_currentMission:getIsServer() then
     if ContractorMod.myCurrentModDirectory then
-      local debugFilePath = ContractorMod.myCurrentModDirectory .. "../FS19_ContractorMod.debug.xml"
+      local debugFilePath = ContractorMod.myCurrentModDirectory .. "../FS22_ContractorMod.debug.xml"
       if fileExists(debugFilePath) then
         print("ContractorMod: Activating DEBUG commands")
         ContractorMod.useDebugCommands = true
-        -- self:addDebugInputBinding()
+        self:addDebugInputBinding()
       end
     end
   end
@@ -1788,5 +1788,60 @@ function ContractorMod:onItemSelectionConfirmed()
   ContractorMod.workers[ContractorMod.currentID].playerStyle:copyFrom(self.currentPlayerStyle)
 end
 WardrobeScreen.onItemSelectionConfirmed = Utils.appendedFunction(WardrobeScreen.onItemSelectionConfirmed, ContractorMod.onItemSelectionConfirmed)
+
+function ContractorMod:addDebugInputBinding()
+  if ContractorMod.debug then print("ContractorMod:addDebugInputBinding ") end
+    
+  local xmltext = " \z
+  <modDesc descVersion=\"66\">\z
+  <actions>\z
+  <action name=\"ContractorMod_DEBUG_MOVE_PASS_LEFT\" category=\"VEHICLE\"/>\z
+  <action name=\"ContractorMod_DEBUG_MOVE_PASS_RIGHT\" category=\"VEHICLE\"/>\z
+  <action name=\"ContractorMod_DEBUG_MOVE_PASS_TOP\" category=\"VEHICLE\"/>\z
+  <action name=\"ContractorMod_DEBUG_MOVE_PASS_BOTTOM\" category=\"VEHICLE\"/>\z
+  <action name=\"ContractorMod_DEBUG_MOVE_PASS_FRONT\" category=\"VEHICLE\"/>\z
+  <action name=\"ContractorMod_DEBUG_MOVE_PASS_BACK\" category=\"VEHICLE\"/>\z
+  <action name=\"ContractorMod_DEBUG_DUMP_PASS\" category=\"VEHICLE\"/>\z
+  </actions>\z
+  </modDesc>\z
+  "
+  local xmlFile = loadXMLFileFromMemory("actions", xmltext)
+
+  InputBinding.loadActions(g_inputBinding, xmlFile, "FS22_ContractorMod")
+
+  xmltext = " \z
+  <modDesc descVersion=\"66\">\z
+  <inputBinding>\z
+  <actionBinding action=\"ContractorMod_DEBUG_MOVE_PASS_LEFT\">\z
+  <binding device=\"KB_MOUSE_DEFAULT\" input=\"KEY_lctrl KEY_a\" axisComponent=\"+\" inputComponent=\"+\" index=\"1\"/>\z
+  </actionBinding>\z
+  <actionBinding action=\"ContractorMod_DEBUG_MOVE_PASS_RIGHT\">\z
+  <binding device=\"KB_MOUSE_DEFAULT\" input=\"KEY_lctrl KEY_d\" axisComponent=\"+\" inputComponent=\"+\" index=\"1\"/>\z
+  </actionBinding>\z
+  <actionBinding action=\"ContractorMod_DEBUG_MOVE_PASS_TOP\">\z
+  <binding device=\"KB_MOUSE_DEFAULT\" input=\"KEY_lctrl KEY_q\" axisComponent=\"+\" inputComponent=\"+\" index=\"1\"/>\z
+  </actionBinding>\z
+  <actionBinding action=\"ContractorMod_DEBUG_MOVE_PASS_BOTTOM\">\z
+  <binding device=\"KB_MOUSE_DEFAULT\" input=\"KEY_lctrl KEY_z\" axisComponent=\"+\" inputComponent=\"+\" index=\"1\"/>\z
+  </actionBinding>\z
+  <actionBinding action=\"ContractorMod_DEBUG_MOVE_PASS_FRONT\">\z
+  <binding device=\"KB_MOUSE_DEFAULT\" input=\"KEY_lctrl KEY_w\" axisComponent=\"+\" inputComponent=\"+\" index=\"1\"/>\z
+  </actionBinding>\z
+  <actionBinding action=\"ContractorMod_DEBUG_MOVE_PASS_BACK\">\z
+  <binding device=\"KB_MOUSE_DEFAULT\" input=\"KEY_lctrl KEY_s\" axisComponent=\"+\" inputComponent=\"+\" index=\"1\"/>\z
+  </actionBinding>\z
+  <actionBinding action=\"ContractorMod_DEBUG_DUMP_PASS\">\z
+  <binding device=\"KB_MOUSE_DEFAULT\" input=\"KEY_lctrl KEY_e\" axisComponent=\"+\" inputComponent=\"+\" index=\"1\"/>\z
+  </actionBinding>  \z
+  </inputBinding>\z
+  </modDesc>\z
+  "
+  xmlFile = loadXMLFileFromMemory("inputBinding", xmltext)
+
+  InputBinding.loadActionBindingsFromXML(g_inputBinding, xmlFile, true, "FS22_ContractorMod")
+  InputBinding.assignActionPrimaryBindings(g_inputBinding)
+  InputBinding.commitBindingChanges(g_inputBinding)
+
+end
 
 addModEventListener(ContractorMod);
