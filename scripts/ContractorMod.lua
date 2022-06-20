@@ -1333,6 +1333,25 @@ function ContractorMod:ManageLeaveVehicle(controlledVehicle)
         end
       else
         if controlledVehicle.passengers[ContractorMod.workers[ContractorMod.currentID].currentSeat] ~= nil then
+          local passengerNode = controlledVehicle.passengers[ContractorMod.workers[ContractorMod.currentID].currentSeat].characterNode
+          local xPassenger, _, _ = getTranslation(passengerNode)
+          local exitPoint = controlledVehicle:getExitNode()
+          local x, y, z = getTranslation(exitPoint)
+          -- print(string.format("x: %3.4f, y: %3.4f, z: %3.4f", x, y, z))
+          -- print(string.format("xPassenger: %3.4f", xPassenger))
+          if (x - xPassenger) > x then
+            -- Set exit point on the other side for vehicles where passenger is on the other side
+            -- Backup exitPoint
+            controlledVehicle.backupExitPoint = createTransformGroup("backupExitPoint")
+            link(controlledVehicle.rootNode, controlledVehicle.backupExitPoint)
+            setTranslation(controlledVehicle.backupExitPoint, x, y, z)
+            setTranslation(exitPoint, -x, y, z)
+            x, y, z = getWorldTranslation(exitPoint)
+            -- print(string.format("x: %3.4f, y: %3.4f, z: %3.4f", x, y, z))
+            x, y, z = getTranslation(controlledVehicle.backupExitPoint)
+            -- print(string.format("x: %3.4f, y: %3.4f, z: %3.4f", x, y, z))
+          end
+
           controlledVehicle.passengers[ContractorMod.workers[ContractorMod.currentID].currentSeat]:delete()
           ContractorMod.workers[ContractorMod.currentID].isNewPassenger = false
           if ContractorMod.debug then print("passenger leaving") end
@@ -1384,14 +1403,21 @@ function ContractorMod:ManageLeaveVehicle(controlledVehicle)
     if ContractorMod.debug then print("isHired " .. tostring(controlledVehicle.isHired) .. " disableChar " .. tostring(controlledVehicle.disableCharacterOnLeave) .. " steering " .. tostring(controlledVehicle.steeringEnabled)) end
   end
 end
-function ContractorMod:onLeaveVehicle()
+function ContractorMod:onLeaveVehicle(superFunc, ...)
   if ContractorMod.debug then print("ContractorMod:onLeaveVehicle ") end
   local controlledVehicle = g_currentMission.controlledVehicle
   if controlledVehicle ~= nil then
     ContractorMod:ManageLeaveVehicle(controlledVehicle)
   end
+  superFunc(self, ...)
+  if controlledVehicle ~= nil and controlledVehicle.backupExitPoint then
+    -- Restore exitPoint
+    local x, y, z = getTranslation(controlledVehicle.backupExitPoint)
+    local exitPoint = controlledVehicle:getExitNode()
+    setTranslation(exitPoint, x, y, z)
+  end
 end
-BaseMission.onLeaveVehicle = Utils.prependedFunction(BaseMission.onLeaveVehicle, ContractorMod.onLeaveVehicle);
+BaseMission.onLeaveVehicle = Utils.overwrittenFunction(BaseMission.onLeaveVehicle, ContractorMod.onLeaveVehicle);
 
 -- @doc Set mapping between savegame vehicle id and vehicle network id when vehicle is loaded
 ContractorMod.appEnterableOnLoad = function(self, savegame)
@@ -1608,6 +1634,13 @@ function ContractorMod:drawUIInfo()
 end
 Player.drawUIInfo = Utils.overwrittenFunction(Player.drawUIInfo, ContractorMod.drawUIInfo);
 
+-- function ContractorMod:setVisibility(superFunc, visibility)
+--   print("ContractorMod:setVisibility player "..self.rootNode..": "..tostring(visibility))
+--   printCallstack()
+--   superFunc(self, visibility)
+-- end
+-- Player.setVisibility = Utils.overwrittenFunction(Player.setVisibility, ContractorMod.setVisibility);
+
 -- @doc Launch init at first call and then update workers positions and states
 function ContractorMod:update(dt)
   -- DebugUtil.printTableRecursively(g_currentMission.player, " ", 1, 3)
@@ -1623,6 +1656,7 @@ function ContractorMod:update(dt)
       -- g_currentMission.player:moveRootNodeToAbsolute(firstWorker.x, firstWorker.y, firstWorker.z);
       firstWorker.x, firstWorker.y, firstWorker.z, firstWorker.rotY = g_currentMission.player:getPositionData()
       g_currentMission.player:moveTo(firstWorker.x, firstWorker.y, firstWorker.z, true, true)
+      -- DebugUtil.printTableRecursively(firstWorker, " ", 1, 2)
       g_currentMission.player:setRotation(firstWorker.rotX, firstWorker.rotY)
       if firstWorker.currentVehicle ~= nil then
         firstWorker:afterSwitch()
@@ -1744,6 +1778,7 @@ function ContractorMod:onPlayerEnter(isControlling)
       print("\nworker:getStyle()")
       -- DebugUtil.printTableRecursively(ContractorMod.workers[ContractorMod.currentID].playerStyle, " ", 1, 2)
     end
+    -- printCallstack()
     g_currentMission.player:getStyle():copyFrom(ContractorMod.workers[ContractorMod.currentID].playerStyle)
   end
 end

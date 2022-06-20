@@ -83,7 +83,8 @@ function ContractorModWorker:displayName(contractorMod)
       if self.currentVehicle ~= nil then
         vehicleName = self.currentVehicle:getFullName()
       end
-      renderText(0.9828, 0.42, 0.012, vehicleName);
+      renderText(0.9828, 0.43, 0.012, vehicleName);
+      renderText(0.9828, 0.42, 0.012, "seat:" .. tostring(self.currentSeat) );
     end
     renderText(0.9828, 0.41, 0.012, self.name);
     renderText(0.9828, 0.40, 0.012, "x:" .. tostring(self.x) .. " y:" .. tostring(self.y) .. " z:" .. tostring(self.z));
@@ -124,7 +125,7 @@ function ContractorModWorker:beforeSwitch(noEventSend)
       end
       -- if ContractorModWorker.debug then print("ContractorModWorker: moveTo "..tostring(self.player.model.style.playerName)); end
 
-      local terrainHeight = getTerrainHeightAtWorldPos(g_currentMission.terrainRootNode, self.x, 300, self.z)
+      -- local terrainHeight = getTerrainHeightAtWorldPos(g_currentMission.terrainRootNode, self.x, 300, self.z)
       -- self.y = math.max(terrainHeight + 0.1, self.y + 0.9)
     
       -- self.player:moveRootNodeToAbsolute(self.x, self.y, self.z)
