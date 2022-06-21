@@ -43,7 +43,7 @@ function ContractorModWorker:new(name, index, workerStyle)
 
   -- p.model.style.playerName = name
   self.mapHotSpot = nil
-  self.color = g_playerColors[(workerStyle.playerColorIndex + 1)].value
+  self.color = Farm.COLORS[index]
   if g_currentMission.controlPlayer and g_currentMission.player ~= nil then
     -- self.x, self.y, self.z = getWorldTranslation(g_currentMission.player.rootNode);
     self.x, self.y, self.z, self.rotY = g_currentMission.player:getPositionData()

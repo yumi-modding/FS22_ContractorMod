@@ -35,188 +35,6 @@ function ContractorMod:loadMap(name)
     return;
   end;
 
-  g_playerColors = {
-    {
-      name = "color_white",
-      value = {
-        1,
-        1,
-        1,
-        1
-      }
-    },
-    {
-      name = "color_lightGrey",
-      value = {
-        0.7,
-        0.7,
-        0.75,
-        1
-      }
-    },
-    {
-      name = "color_darkGrey",
-      value = {
-        0.12,
-        0.12,
-        0.14,
-        1
-      }
-    },
-    {
-      name = "color_black",
-      value = {
-        0.03,
-        0.03,
-        0.03,
-        1
-      }
-    },
-    {
-      name = "color_iceblue",
-      value = {
-        0.287,
-        0.533,
-        0.904,
-        1
-      }
-    },
-    {
-      name = "color_blue",
-      value = {
-        0.11,
-        0.24,
-        0.45,
-        1
-      }
-    },
-    {
-      name = "color_darkBlue",
-      value = {
-        0.0395,
-        0.083,
-        0.235,
-        1
-      }
-    },
-    {
-      name = "color_lakeBlue",
-      value = {
-        0.0232,
-        0.0382,
-        0.0844,
-        1
-      }
-    },
-    {
-      name = "color_brightGreen",
-      value = {
-        0.296,
-        0.439,
-        0.107,
-        1
-      }
-    },
-    {
-      name = "color_green",
-      value = {
-        0.11,
-        0.31,
-        0.09,
-        1
-      }
-    },
-    {
-      name = "color_darkGreen",
-      value = {
-        0.038,
-        0.0865,
-        0.0215,
-        1
-      }
-    },
-    {
-      name = "color_forestGreen",
-      value = {
-        0.017,
-        0.0275,
-        0.0131,
-        1
-      }
-    },
-    {
-      name = "color_pink",
-      value = {
-        0.855,
-        0.255,
-        0.404,
-        1
-      }
-    },
-    {
-      name = "color_brightRed",
-      value = {
-        0.5,
-        0.1,
-        0.1,
-        1
-      }
-    },
-    {
-      name = "color_red",
-      value = {
-        0.25,
-        0.05,
-        0.05,
-        1
-      }
-    },
-    {
-      name = "color_purple",
-      value = {
-        0.104,
-        0.0356,
-        0.117,
-        1
-      }
-    },
-    {
-      name = "color_yellow",
-      value = {
-        0.839,
-        0.597,
-        0.235,
-        1
-      }
-    },
-    {
-      name = "color_darkYellow",
-      value = {
-        0.468,
-        0.314,
-        0.104,
-        1
-      }
-    },
-    {
-      name = "color_lightBrown",
-      value = {
-        0.21,
-        0.123,
-        0.063,
-        1
-      }
-    },
-    {
-      name = "color_brown",
-      value = {
-        0.07,
-        0.041,
-        0.021,
-        1
-      }
-    }
-  }
   self.initialized = true;
 end;
 
@@ -316,17 +134,13 @@ function ContractorMod:init()
       -- default values
       if ContractorMod.debug then print("ContractorMod: No savegame: set default values") end
       local workerStyle = g_currentMission.player:getStyle()
-      workerStyle.playerColorIndex = 0;
       local worker = ContractorModWorker:new("Alex", 1, workerStyle)
       table.insert(self.workers, worker)
-      workerStyle.playerColorIndex = 1;
-      worker = ContractorModWorker:new("Brenda", 2, workerStyle)
+      worker = ContractorModWorker:new("Brenda", 2, PlayerStyle.newRandomHelper())
       table.insert(self.workers, worker)
-      workerStyle.playerColorIndex = 2;
-      worker = ContractorModWorker:new("Chris", 3, workerStyle)
+      worker = ContractorModWorker:new("Chris", 3, PlayerStyle.newRandomHelper())
       table.insert(self.workers, worker)
-      workerStyle.playerColorIndex = 3;
-      worker = ContractorModWorker:new("David", 4, workerStyle)
+      worker = ContractorModWorker:new("David", 4, PlayerStyle.newRandomHelper())
       table.insert(self.workers, worker)
       self.numWorkers = 4
       self.enableSeveralDrivers = true
@@ -480,11 +294,6 @@ function ContractorMod:initFromSave()
             if ContractorMod.debug then print(workerName) end
             local workerStyle = PlayerStyle.new()
             workerStyle:loadFromXMLFile(xmlFile, key .. ".style")
-            local playerColorIndex = xmlFile:getInt(key .. string.format("#playerColorIndex"));
-            if playerColorIndex == nil then
-              playerColorIndex = 0
-            end
-            workerStyle.playerColorIndex = playerColorIndex
             local worker = ContractorModWorker:new(workerName, i, workerStyle)
             if ContractorMod.debug then print(xmlFile:getString(key.."#position")) end
             local x, y, z = string.getVector(xmlFile:getString(key.."#position"));
@@ -589,13 +398,7 @@ function ContractorMod:initFromParam()
             else
               workerStyle:loadFromXMLFile(xmlFile, key .. ".style")
             end
-            local playerColorIndex = xmlFile:getInt(key .. string.format("#playerColorIndex"));
-            if playerColorIndex == nil then
-              playerColorIndex = 0
-            end
-            workerStyle.playerColorIndex = playerColorIndex
             if ContractorMod.debug then print(workerName) end
-            local farmId = 1
             local worker = ContractorModWorker:new(workerName, i, workerStyle)
             if ContractorMod.debug then print(xmlFile:getString(key.."#position")) end
             local x, y, z = string.getVector(xmlFile:getString(key.."#position"));
