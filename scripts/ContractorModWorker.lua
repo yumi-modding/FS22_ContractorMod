@@ -116,7 +116,7 @@ function ContractorModWorker:beforeSwitch(noEventSend)
       self.x, self.y, self.z, self.rotY = g_currentMission.player:getPositionData()
       if ContractorModWorker.debug then print("ContractorModWorker: "..tostring(self.x)..", "..tostring(self.y)..", "..tostring(self.z)) end
       self.rotX = g_currentMission.player.rotX;
-      -- self.rotY = g_currentMission.player.rotY;
+      self.rotY = g_currentMission.player.rotY;
       self.player.isEntered = false
       self.player:setStyleAsync(self.playerStyle, nil, false)
       if noEventSend == nil or noEventSend == false then
