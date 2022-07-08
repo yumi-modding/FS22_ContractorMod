@@ -11,7 +11,7 @@
         <text name="input_ContractorMod_WORKER6" text="Overstappen naar helper 6" />
         <text name="input_ContractorMod_WORKER7" text="Overstappen naar helper 7" />
         <text name="input_ContractorMod_WORKER8" text="Overstappen naar helper 8" />
-        <text name="ContractorMod_VEHICLE_NOT_FREE" text="Voertuig is al in gebruik door een andere helper" />
+        <text name="ContractorMod_VEHICLE_NOT_FREE" text="Het voertuig is al in gebruik door een andere helper" />
         <text name="ContractorMod_WORKER__STOP" text="Het voertuig zal bij het verlaten stoppen" />
         <text name="ContractorMod_NO_MORE_PASSENGER" text="Geen plaats meer voor een passagier in dit voertuig" />
     </texts>
