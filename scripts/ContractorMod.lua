@@ -27,6 +27,70 @@ ContractorMod.useDebugCommands = false
 function ContractorMod:loadedMission() --[[----------------------------------------------------------------]] print("This is a development version of ContractorMod for FS22, which may and will contain errors, bugs.") end
 Mission00.loadMission00Finished = Utils.appendedFunction(Mission00.loadMission00Finished, ContractorMod.loadedMission)
 
+function ContractorMod:startMission()
+  if ContractorMod.debug then print("ContractorMod:startMission") end
+
+  if ContractorMod.workers == nil then -- and g_currentMission.player.controllerIndex > 0 and g_currentMission.player.time > 1000 then
+    -- DebugUtil.printTableRecursively(g_currentMission.player, " ", 1, 3)
+    -- default values
+    ContractorMod:init()
+    -- DebugUtil.printTableRecursively(ContractorMod.workers, " ", 1, 3)
+    for i = 2, ContractorMod.numWorkers do
+      local worker = ContractorMod.workers[i]
+      print(worker.name)
+      if worker.currentVehicle == nil then
+        -- OK but rotation
+        if ContractorMod.debug then print("ContractorMod: setTranslation"); end
+        setTranslation(worker.player.rootNode, worker.x, worker.y, worker.z);
+        -- worker.player:moveRootNodeToAbsolute(worker.x, worker.y, worker.z)
+        -- -- worker.player.moveTo(worker.x, worker.y, worker.z, true, true)
+        -- ContractorMod:setRotation(worker.player)--.rootNode, worker.rotX, worker.rotY)
+        local spawnPoint = g_farmManager:getSpawnPoint(worker.player.farmId)
+        local dx, _, dz = localDirectionToWorld(spawnPoint, 0, 0, -1)
+        local ry = MathUtil.getYRotationFromDirection(dx, dz)
+        print("ry: "..tostring(ry))
+        -- ry = ry + math.rad(180.0)
+        -- print("ry: "..tostring(ry))
+        worker.player:setRotation(0, ry)
+        worker.player:setVisibility(true)
+      else
+        -- KO
+        if ContractorMod.debug then print("ContractorMod: setVisibility false"); end
+        worker.player.isEntered = false
+        worker.player.isControlled = true
+        worker.player:setVisibility(false)
+        worker.player:moveToAbsoluteInternal(0, -200, 0); -- isFalling if 2000, visible if -200
+      end
+    end
+    local firstWorker = ContractorMod.workers[ContractorMod.currentID]
+    if g_currentMission.player and g_currentMission.player ~= nil then
+      if ContractorMod.debug then print("ContractorMod: setVisibility false"); end
+      firstWorker.player.isEntered = false
+      firstWorker.player.isControlled = true
+      firstWorker.player:setVisibility(false)
+      firstWorker.player:moveToAbsoluteInternal(0, -200, 0);
+      -- g_currentMission.player:getStyle():copyFrom(ContractorMod.workers[ContractorMod.currentID].playerStyle)
+      if ContractorMod.debug then print("ContractorMod: moveToAbsolute"); end
+      setTranslation(g_currentMission.player.rootNode, firstWorker.x, firstWorker.y, firstWorker.z);
+      g_currentMission.player:moveRootNodeToAbsolute(firstWorker.x, firstWorker.y, firstWorker.z);
+      firstWorker.x, firstWorker.y, firstWorker.z, firstWorker.rotY = g_currentMission.player:getPositionData()
+      g_currentMission.player:moveTo(firstWorker.x, firstWorker.y, firstWorker.z, true, true)
+      -- DebugUtil.printTableRecursively(firstWorker, " ", 1, 2)
+      g_currentMission.player:setRotation(firstWorker.rotX, firstWorker.rotY)
+      if firstWorker.currentVehicle ~= nil then
+        -- firstWorker:afterSwitch()
+        firstWorker.ContractorMod.playerStyle:print()
+        g_client:getServerConnection():sendEvent(VehicleEnterRequestEvent.new(firstWorker.currentVehicle, firstWorker.playerStyle, firstWorker.farmId));
+      end
+    end
+    g_asyncTaskManager:addTask(function ()
+      if ContractorMod.debug then print("ContractorMod is initialized") end
+      ContractorMod.initializing = false
+    end)
+  end
+end
+Mission00.onStartMission = Utils.appendedFunction(Mission00.onStartMission, ContractorMod.startMission)
+
 -- @doc First code called during map loading (before we can actually interact)
 function ContractorMod:loadMap(name)
   if ContractorMod.debug then print("ContractorMod:loadMap(name)") end
@@ -153,7 +217,8 @@ function ContractorMod:init()
   -- Associate 1 player to each character and show it if needed
   local index = 1
   for k, p in pairs(g_currentMission.players) do
-    if p ~= nil and p.rootNode ~= g_currentMission.player.rootNode then
+    if p ~= nil then
+      if p.rootNode ~= g_currentMission.player.rootNode then
         local worker = self.workers[index]
         p.isControlled = true
         p:moveTo(worker.x, worker.y-0.8, worker.z, true, true)
@@ -170,9 +235,12 @@ function ContractorMod:init()
           setRotation(p.graphicsRootNode, 0, worker.rotY + math.rad(180.0), 0) -- + math.rad(120.0), 0)  -- Why 120? difference ???
           setRotation(p.cameraNode, worker.rotX, worker.rotY, 0)
         end
+        -- print("Set style "..worker.name)
+        -- worker.playerStyle:print()
         p:setStyleAsync(worker.playerStyle, nil, false)
         worker.player = p
         index = index + 1
+      end
     end
   end
   if ContractorMod.debug then print("ContractorMod:init()------------") end
@@ -229,35 +297,37 @@ end
 function ContractorMod:debugCommands(actionName, keyStatus)
 	if ContractorMod.debug then print("ContractorMod:debugCommands") end
   if ContractorMod.debug then print("actionName "..tostring(actionName)) end
-  local x1, y1, z1 = getTranslation(g_currentMission.controlledVehicle.passengers[1].characterNode)
-  if string.sub(actionName, 1, 30) == "ContractorMod_DEBUG_MOVE_PASS_" then
-    if actionName == "ContractorMod_DEBUG_MOVE_PASS_LEFT" then
-      -- print("+x")
-      x1 = x1 + 0.05
-    elseif actionName == "ContractorMod_DEBUG_MOVE_PASS_RIGHT" then
-      -- print("-x")
-      x1 = x1 - 0.05
-    elseif actionName == "ContractorMod_DEBUG_MOVE_PASS_TOP" then
-      -- print("+z")
-      z1 = z1 + 0.05
-    elseif actionName == "ContractorMod_DEBUG_MOVE_PASS_BOTTOM" then
-      -- print("-z")
-      z1 = z1 - 0.05
-    elseif actionName == "ContractorMod_DEBUG_MOVE_PASS_FRONT" then
-      -- print("+y")
-      y1 = y1 + 0.05
-    elseif actionName == "ContractorMod_DEBUG_MOVE_PASS_BACK" then
-      -- print("-y")
-      y1 = y1 - 0.05
+  if g_currentMission.controlledVehicle then
+    local x1, y1, z1 = getTranslation(g_currentMission.controlledVehicle.passengers[1].characterNode)
+    if string.sub(actionName, 1, 30) == "ContractorMod_DEBUG_MOVE_PASS_" then
+      if actionName == "ContractorMod_DEBUG_MOVE_PASS_LEFT" then
+        -- print("+x")
+        x1 = x1 + 0.05
+      elseif actionName == "ContractorMod_DEBUG_MOVE_PASS_RIGHT" then
+        -- print("-x")
+        x1 = x1 - 0.05
+      elseif actionName == "ContractorMod_DEBUG_MOVE_PASS_TOP" then
+        -- print("+z")
+        z1 = z1 + 0.05
+      elseif actionName == "ContractorMod_DEBUG_MOVE_PASS_BOTTOM" then
+        -- print("-z")
+        z1 = z1 - 0.05
+      elseif actionName == "ContractorMod_DEBUG_MOVE_PASS_FRONT" then
+        -- print("+y")
+        y1 = y1 + 0.05
+      elseif actionName == "ContractorMod_DEBUG_MOVE_PASS_BACK" then
+        -- print("-y")
+        y1 = y1 - 0.05
+      end
+      setTranslation(g_currentMission.controlledVehicle.passengers[1].characterNode, x1, y1, z1)
+      print("x1: "..tostring(x1).." y1: "..tostring(y1).." z1: "..tostring(z1))
+      DebugUtil.drawDebugReferenceAxisFromNode(g_currentMission.controlledVehicle.passengers[1].characterNode)
     end
-    setTranslation(g_currentMission.controlledVehicle.passengers[1].characterNode, x1, y1, z1)
-    print("x1: "..tostring(x1).." y1: "..tostring(y1).." z1: "..tostring(z1))
-    DebugUtil.drawDebugReferenceAxisFromNode(g_currentMission.controlledVehicle.passengers[1].characterNode)
-  end
-  if actionName == "ContractorMod_DEBUG_DUMP_PASS" then
-    print("passenger location")
-    local configFileName = g_currentMission.controlledVehicle.configFileName
-    print("<Passenger vehiclesName=\""..configFileName.."\" seatIndex=\"1\" x=\""..string.format("%2.4f", x1).."\" y=\""..string.format("%2.4f", y1).."\" z=\""..string.format("%2.4f", z1).."\" rx=\"0\" ry=\"0\" rz=\"0\" />")
+    if actionName == "ContractorMod_DEBUG_DUMP_PASS" then
+      print("passenger location")
+      local configFileName = g_currentMission.controlledVehicle.configFileName
+      print("<Passenger vehiclesName=\""..configFileName.."\" seatIndex=\"1\" x=\""..string.format("%2.4f", x1).."\" y=\""..string.format("%2.4f", y1).."\" z=\""..string.format("%2.4f", z1).."\" rx=\"0\" ry=\"0\" rz=\"0\" />")
+    end
   end
 end
 
@@ -591,9 +661,25 @@ function ContractorMod:ManageNewVehicle(vehicle)
           end
         end
       end
-      if foundConfig == false and displayWarning == true then
-        print("[ContractorMod]No passenger seat configured for vehicle "..vehicle.configFileName)
-        print("[ContractorMod]Please edit modSettings/ContractorMod.xml to set passenger position")
+      if foundConfig == false then
+        if displayWarning == true then
+          print("[ContractorMod]No passenger seat configured for vehicle "..vehicle.configFileName)
+          print("[ContractorMod]Please edit modSettings/ContractorMod.xml to set passenger position")
+        end
+        if ContractorMod.useDebugCommands then
+          local characterNode = vehicle.spec_enterable.defaultCharacterNode
+          -- print("Driver position node is: "..tostring(characterNode))
+          -- local x1, y1, z1 = getTranslation(characterNode)
+          -- print("x1: "..tostring(x1).." y1: "..tostring(y1).." z1: "..tostring(z1))
+          local dx,dy,dz = localToLocal(vehicle.rootNode, characterNode, 0,0,0);
+          -- print("x=\""..tostring(dx).."\" y=\""..tostring(dy).."\" z=\""..tostring(dz))
+          x = -dx
+          y = -dy
+          z = -dz
+          seatIndex = 1
+          if ContractorMod.debug then print('Adding default seat '..tostring(seatIndex)..' for '..vehicle.configFileName) end
+          vehicle.passengers[seatIndex] = ContractorMod.addPassenger(vehicle, x, y, z, rx, ry, rz)
+        end
       end
     end
 end
@@ -770,6 +856,8 @@ function ContractorMod:ReplaceEnterVehicle(superFunc, isControlling, playerStyle
         end
       end
 
+      if ContractorMod.useDebugCommands and firstFreepassengerSeat <0 then firstFreepassengerSeat = 1 end
+
       if self.typeName == "horse" then
         if ContractorMod.debug then print("ContractorMod: horse: "..self:getFullName()) end
         superFunc(self, isControlling, ContractorMod.workers[ContractorMod.currentID].playerStyle, farmId)
@@ -819,6 +907,12 @@ function ContractorMod:ReplaceOnPlayerStyleChanged(superFunc, style, userId)
   if ContractorMod.debug then print("ContractorMod:ReplaceOnPlayerStyleChanged "..userId) end
   -- printCallstack()
   local worker = ContractorMod.workers[ContractorMod.currentID]
+  -- print(worker.name)
+  -- style:print()
+  if ContractorMod.initializing then 
+    if ContractorMod.debug then print("return ContractorMod:ReplaceOnPlayerStyleChanged") end
+    return
+  end
   worker.playerStyle:copyFrom(style)
   if worker.currentVehicle ~= nil and worker.currentSeat ~= nil then
     ContractorMod:placeVisualWorkerInVehicle(worker, worker.currentVehicle, worker.currentSeat)
@@ -1022,7 +1116,7 @@ function ContractorMod:replaceVehicleEnterRequestEventRun(superfunc, connection)
   end
   if ContractorMod.debug then print("firstFreepassengerSeat "..tostring(firstFreepassengerSeat)) end
 
-  if not canEnterWhenSwitching then
+  if not canEnterWhenSwitching and not ContractorMod.useDebugCommands then
     if firstFreepassengerSeat < 0 and not ContractorMod.initializing then
       if ContractorMod.debug then print("ContractorMod:replaceVehicleEnterRequestEventRun ") end
       g_currentMission:addIngameNotification(FSBaseMission.INGAME_NOTIFICATION_INFO, g_i18n:getText("ContractorMod_NO_MORE_PASSENGER"))
@@ -1259,6 +1353,36 @@ function ContractorMod:setAIHelperName(superfunc, name)
 end
 AIHotspot.setAIHelperName = Utils.overwrittenFunction(AIHotspot.setAIHelperName, ContractorMod.setAIHelperName);
 
+
+-- Enable to set color on PlayerHotSpot. Now need to display all PlayerHotSpots, not only current one and map them to workers
+function ContractorMod:getColor()
+  -- if ContractorMod.debug then print("ContractorMod:getColor()") end
+  local color = { 1, 1, 1, 1}
+  if ContractorMod.workers ~= nil then
+    if self.player then
+      for i = 1, #ContractorMod.workers do
+        local worker = ContractorMod.workers[i]
+        -- print("worker.name "..tostring(worker.name))
+        -- print("nickname "..tostring(nickname))
+        if worker.name == nickname then
+          color = worker.color
+        end
+      end
+    elseif self.vehicle then
+      for i = 1, #ContractorMod.workers do
+        local worker = ContractorMod.workers[i]
+        if worker.currentVehicle == self.vehicle then
+          color = worker.color
+        end
+      end
+    end
+  end
+  -- print(tostring(unpack(color)))
+  return color --ContractorMod.workers[ContractorMod.currentID].color
+end
+PlayerHotspot.getColor = Utils.overwrittenFunction(PlayerHotspot.getColor, ContractorMod.getColor);
+VehicleHotspot.getColor = Utils.overwrittenFunction(VehicleHotspot.getColor, ContractorMod.getColor);
+
 -- @doc Draw worker name and hotspots on map
 function ContractorMod:draw()
   --if ContractorModWorker.debug then print("ContractorMod:draw()") end
@@ -1362,54 +1486,28 @@ Player.drawUIInfo = Utils.overwrittenFunction(Player.drawUIInfo, ContractorMod.d
 -- end
 -- Player.setVisibility = Utils.overwrittenFunction(Player.setVisibility, ContractorMod.setVisibility);
 
+-- function ContractorMod:getPlayerStyle(superFunc, userId)
+--   print("ContractorMod:getPlayerStyle")
+--   -- Too soon, ContractorMod not initialized yet
+--   local firstWorker = ContractorMod.workers[1]
+--   return firstWorker.playerStyle
+--   -- printCallstack()
+--   -- superFunc(self, userId)
+-- end
+-- PlayerInfoStorage.getPlayerStyle = Utils.overwrittenFunction(PlayerInfoStorage.getPlayerStyle, ContractorMod.getPlayerStyle);
+-- function ContractorMod:setPlayerStyle(superFunc, userId, style)
+  -- print("ContractorMod:setPlayerStyle")
+  -- Too soon, ContractorMod not initialized yet
+  -- local firstWorker = ContractorMod.workers[1]
+  -- return firstWorker.playerStyle
+  -- printCallstack()
+  -- superFunc(self, userId)
+-- end
+-- PlayerInfoStorage.setPlayerStyle = Utils.overwrittenFunction(PlayerInfoStorage.setPlayerStyle, ContractorMod.setPlayerStyle);
+
 -- @doc Launch init at first call and then update workers positions and states
 function ContractorMod:update(dt)
   -- DebugUtil.printTableRecursively(g_currentMission.player, " ", 1, 3)
-  if self.workers == nil and g_currentMission.player.controllerIndex > 0 and g_currentMission.player.time > 1000 then
-    -- DebugUtil.printTableRecursively(g_currentMission.player, " ", 1, 3)
-    -- default values
-    self:init()
-    -- DebugUtil.printTableRecursively(self.workers, " ", 1, 3)
-    for i = 2, self.numWorkers do
-      local worker = self.workers[i]
-      if worker.currentVehicle == nil then
-        -- OK but rotation
-        if ContractorMod.debug then print("ContractorMod: setTranslation"); end
-        setTranslation(worker.player.rootNode, worker.x, worker.y, worker.z);
-        -- worker.player:moveRootNodeToAbsolute(worker.x, worker.y, worker.z)
-        -- -- worker.player.moveTo(worker.x, worker.y, worker.z, true, true)
-        -- ContractorMod:setRotation(worker.player)--.rootNode, worker.rotX, worker.rotY)
-        local spawnPoint = g_farmManager:getSpawnPoint(worker.player.farmId)
-        local dx, _, dz = localDirectionToWorld(spawnPoint, 0, 0, -1)
-				local ry = MathUtil.getYRotationFromDirection(dx, dz)
-        print("ry: "..tostring(ry))
-        -- ry = ry + math.rad(180.0)
-        -- print("ry: "..tostring(ry))
-				worker.player:setRotation(0, ry)
-        worker.player:setVisibility(true)
-      else
-        -- KO
-        if ContractorMod.debug then print("ContractorMod: setVisibility false"); end
-        worker.player.isEntered = true
-        worker.player.isControlled = true
-        worker.player:setVisibility(false)
-      end
-    end
-    local firstWorker = self.workers[self.currentID]
-    if g_currentMission.player and g_currentMission.player ~= nil then
-      if ContractorMod.debug then print("ContractorMod: moveToAbsolute"); end
-      setTranslation(g_currentMission.player.rootNode, firstWorker.x, firstWorker.y, firstWorker.z);
-      g_currentMission.player:moveRootNodeToAbsolute(firstWorker.x, firstWorker.y, firstWorker.z);
-      firstWorker.x, firstWorker.y, firstWorker.z, firstWorker.rotY = g_currentMission.player:getPositionData()
-      g_currentMission.player:moveTo(firstWorker.x, firstWorker.y, firstWorker.z, true, true)
-      -- DebugUtil.printTableRecursively(firstWorker, " ", 1, 2)
-      g_currentMission.player:setRotation(firstWorker.rotX, firstWorker.rotY)
-      if firstWorker.currentVehicle ~= nil then
-        firstWorker:afterSwitch()
-      end
-    end
-    self.initializing = false
-  end
   
   if self.workers ~= nil and #self.workers > 0 then
     for i = 1, self.numWorkers do
@@ -1458,7 +1556,7 @@ end
 
 -- @doc Change active worker
 function ContractorMod:setCurrentContractorModWorker(setID)
-  if ContractorMod.debug then print("ContractorMod:setCurrentContractorModWorker(setID) " .. tostring(setID)) end
+  if ContractorMod.debug then print("ContractorMod:setCurrentContractorModWorker(setID) " .. tostring(setID) .. " - " .. tostring(self.currentID)) end
   local currentWorker = self.workers[self.currentID]
   if currentWorker ~= nil then
     self.shouldStopWorker = false

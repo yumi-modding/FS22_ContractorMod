@@ -118,7 +118,8 @@ function ContractorModWorker:beforeSwitch(noEventSend)
       self.rotX = g_currentMission.player.rotX;
       self.rotY = g_currentMission.player.rotY;
       self.player.isEntered = false
-      self.player:setStyleAsync(self.playerStyle, nil, false)
+      self.player:setStyleAsync(self.playerStyle, nil, noEventSend)
+      -- self.playerStyle:print()
       if noEventSend == nil or noEventSend == false then
         -- print("set visible 1: "..self.name)
         self.player:setVisibility(true)
