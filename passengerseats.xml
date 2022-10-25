@@ -14,27 +14,25 @@
         <Passenger vehiclesName="data/vehicles/lizard/pickup2017/pickup2017.xml" seatIndex="1" x="-0.418294" y="0.758" z="0.336" rx="0" ry="0" rz="0" />
         <Passenger vehiclesName="data/vehicles/lizard/pickup2017/pickup2017.xml" seatIndex="2" x="0.81" y="1.358" z="-1.35" rx="0" ry="-1.57" rz="0" />
         <Passenger vehiclesName="data/vehicles/lizard/pickup2017/pickup2017.xml" seatIndex="3" x="-0.81" y="1.358" z="-1.35" rx="0" ry="1.57" rz="0" />
+
+        <Passenger vehiclesName="data/vehicles/johnDeere/xuv865M/xuv865M.xml" seatIndex="1" x="-0.5092" y="0.7912" z="-0.0521" rx="0" ry="0" rz="0" />
+
         <!-- combines -->
         <Passenger vehiclesName="data/vehicles/caseIH/a8800MR/a8800MR.xml" seatIndex="1" x="0.4500" y="2.5603" z="1.1619" rx="0" ry="0" rz="0" />
         <Passenger vehiclesName="data/vehicles/caseIH/axialFlow150/axialFlow150.xml" seatIndex="1" x="0.5500" y="2.7943" z="2.4984" rx="0" ry="0" rz="0" />
         <Passenger vehiclesName="data/vehicles/caseIH/axialFlow250/axialFlow250.xml" seatIndex="1" x="0.5500" y="2.9995" z="2.5399" rx="0" ry="0" rz="0" />
-    <Passenger vehiclesName="data/vehicles/caseIH/moduleExpress635/moduleExpress635.xml" seatIndex="1" x="0.4276" y="2.8385" z="2.4245" rx="0" ry="0" rz="0" />
+        <Passenger vehiclesName="data/vehicles/caseIH/moduleExpress635/moduleExpress635.xml" seatIndex="1" x="0.4276" y="2.8385" z="2.4245" rx="0" ry="0" rz="0" />
 
-    <Passenger vehiclesName="data/vehicles/claas/lexion8000/lexion8000.xml" seatIndex="1" x="0.5000" y="2.8293" z="2.3824" rx="0" ry="0" rz="0" />
+        <Passenger vehiclesName="data/vehicles/claas/lexion8000/lexion8000.xml" seatIndex="1" x="0.5000" y="2.8293" z="2.3824" rx="0" ry="0" rz="0" />
         <Passenger vehiclesName="data/vehicles/claas/trion750/trion750.xml" seatIndex="1" x="0.5000" y="2.7441" z="3.6728" rx="0" ry="0" rz="0" />
-            <Passenger vehiclesName="data/vehicles/deutzFahr/topLiner4090/topLiner4090.xml" seatIndex="1" x="0.0" y="0.0" z="0.0" rx="0" ry="0" rz="0" />
+        <Passenger vehiclesName="data/vehicles/deutzFahr/topLiner4090/topLiner4090.xml" seatIndex="-1" x="0.0" y="0.0" z="0.0" rx="0" ry="0" rz="0" />
         <Passenger vehiclesName="data/vehicles/fendt/ideal/ideal.xml" seatIndex="1" x="0.5353" y="2.7037" z="3.6342" rx="0" ry="0" rz="0" />
-<Passenger vehiclesName="data/vehicles/grimme/rexor6300/rexor6300.xml" seatIndex="1" x="0.0" y="0.0" z="0.0" rx="0" ry="0" rz="0" />
-<Passenger vehiclesName="data/vehicles/grimme/rh2460/rh2460.xml" seatIndex="1" x="0.0" y="0.0" z="0.0" rx="0" ry="0" rz="0" />
-<Passenger vehiclesName="data/vehicles/grimme/sl8022/sl8022.xml" seatIndex="1" x="0.0" y="0.0" z="0.0" rx="0" ry="0" rz="0" />
-<Passenger vehiclesName="data/vehicles/grimme/tc816/tc816.xml" seatIndex="1" x="0.0" y="0.0" z="0.0" rx="0" ry="0" rz="0" />
-<Passenger vehiclesName="data/vehicles/grimme/ventor4150/ventor4150.xml" seatIndex="1" x="0.0" y="0.0" z="0.0" rx="0" ry="0" rz="0" />
-<Passenger vehiclesName="data/vehicles/johnDeere/cp690/cp690.xml" seatIndex="1" x="0.0" y="0.0" z="0.0" rx="0" ry="0" rz="0" />
-    <Passenger vehiclesName="data/vehicles/johnDeere/t560/t560.xml" seatIndex="1" x="0.5500" y="2.6859" z="2.2476" rx="0" ry="0" rz="0" />
-<Passenger vehiclesName="data/vehicles/johnDeere/x9_1100/x9_1100.xml" seatIndex="1" x="0.0" y="0.0" z="0.0" rx="0" ry="0" rz="0" />
-
-    <Passenger vehiclesName="data/vehicles/masseyFerguson/ideal/ideal.xml" seatIndex="1" x="0.5353" y="2.7037" z="3.6342" rx="0" ry="0" rz="0" />
-    <Passenger vehiclesName="data/vehicles/masseyFerguson/ideal/idealPL.xml" seatIndex="1" x="0.5353" y="2.7037" z="3.6342" rx="0" ry="0" rz="0" />
+        <Passenger vehiclesName="data/vehicles/fendt/ideal/idealPL.xml" seatIndex="1" x="0.5852" y="2.6537" z="3.6342" rx="0" ry="0" rz="0" />
+        <Passenger vehiclesName="data/vehicles/johnDeere/cp690/cp690.xml" seatIndex="1" x="0.4633" y="2.9360" z="1.5797" rx="0" ry="0" rz="0" />
+        <Passenger vehiclesName="data/vehicles/johnDeere/t560/t560.xml" seatIndex="1" x="0.5500" y="2.7359" z="2.3476" rx="0" ry="0" rz="0" />
+        <Passenger vehiclesName="data/vehicles/johnDeere/x9_1100/x9_1100.xml" seatIndex="1" x="0.5500" y="2.8891" z="2.6078" rx="0" ry="0" rz="0" />
+        <Passenger vehiclesName="data/vehicles/masseyFerguson/ideal/ideal.xml" seatIndex="1" x="0.5353" y="2.7037" z="3.6342" rx="0" ry="0" rz="0" />
+        <Passenger vehiclesName="data/vehicles/masseyFerguson/ideal/idealPL.xml" seatIndex="1" x="0.5852" y="2.6537" z="3.6342" rx="0" ry="0" rz="0" />
 
 <Passenger vehiclesName="data/vehicles/newHolland/braud9070L/braud9070L.xml" seatIndex="1" x="0.0" y="0.0" z="0.0" rx="0" ry="0" rz="0" />
 <Passenger vehiclesName="data/vehicles/newHolland/braud9090X/braud9090X.xml" seatIndex="1" x="0.0" y="0.0" z="0.0" rx="0" ry="0" rz="0" />
@@ -57,13 +55,22 @@
         <!-- trucks -->
 
         <!-- sprayer -->
-<Passenger vehiclesName="data/vehicles/hardi/rubicon9000/rubicon9000.xml" seatIndex="1" x="0.0" y="0.0" z="0.0" rx="0" ry="0" rz="0" />
+        <Passenger vehiclesName="data/vehicles/berthoud/bruin4200/bruin4200.xml" seatIndex="1" x="0.5000" y="2.8712" z="-0.3312" rx="0" ry="0" rz="0" />
+        <Passenger vehiclesName="data/vehicles/hardi/rubicon9000/rubicon9000.xml" seatIndex="1" x="0.5500" y="2.7294" z="2.1047" rx="0" ry="0" rz="0" />
 
         <!-- potatoHarvester -->
-			<Passenger vehiclesName="data/vehicles/grimme/grimmeRH2460/grimmeRH2460.xml" seatIndex="-1" x="0.0" y="0.0" z="0.0" rx="0" ry="0" rz="0" /> 
-			<Passenger vehiclesName="data/vehicles/grimme/grimmeSL8022/grimmeSL8022.xml" seatIndex="-1" x="0.0" y="0.0" z="0.0" rx="0" ry="0" rz="0" /> 
-			<Passenger vehiclesName="data/vehicles/grimme/grimmeTC8016/grimmeTC8016.xml" seatIndex="-1" x="0.0" y="0.0" z="0.0" rx="0" ry="0" rz="0" /> 
+        <Passenger vehiclesName="data/vehicles/grimme/rexor6300/rexor6300.xml" seatIndex="1" x="0.5000" y="2.8368" z="4.5139" rx="0" ry="0" rz="0" />
+            <Passenger vehiclesName="data/vehicles/grimme/rh2460/rh2460.xml" seatIndex="-1" x="0.0" y="0.0" z="0.0" rx="0" ry="0" rz="0" />
+            <Passenger vehiclesName="data/vehicles/grimme/sl8022/sl8022.xml" seatIndex="-1" x="0.0" y="0.0" z="0.0" rx="0" ry="0" rz="0" />
+            <Passenger vehiclesName="data/vehicles/grimme/tc816/tc816.xml" seatIndex="-1" x="0.0" y="0.0" z="0.0" rx="0" ry="0" rz="0" />
+        <Passenger vehiclesName="data/vehicles/grimme/ventor4150/ventor4150.xml" seatIndex="1" x="0.5093" y="2.9904" z="3.2736" rx="0" ry="0" rz="0" />
+
         <!-- forageHarvesters -->
+        <Passenger vehiclesName="data/vehicles/claas/jaguar960TT/jaguar960TT.xml" seatIndex="1" x="0.5500" y="2.7546" z="2.6570" rx="0" ry="0" rz="0" />
+        <Passenger vehiclesName="data/vehicles/fendt/katana650/katana650.xml" seatIndex="1" x="0.5500" y="2.6848" z="2.0578" rx="0" ry="0" rz="0" />
+        <Passenger vehiclesName="data/vehicles/johnDeere/series9000/series9000.xml" seatIndex="1" x="0.5955" y="2.8182" z="2.4864" rx="0" ry="0" rz="0" />
+        <Passenger vehiclesName="data/vehicles/krone/bigX1180/bigX1180.xml" seatIndex="1" x="0.5000" y="2.6416" z="1.5240" rx="0" ry="0" rz="0" />
+        <Passenger vehiclesName="data/vehicles/newHolland/fr780/fr780.xml" seatIndex="1" x="0.5000" y="2.7578" z="1.7344" rx="0" ry="0" rz="0" />
 
         <!-- teleLoader -->
 
