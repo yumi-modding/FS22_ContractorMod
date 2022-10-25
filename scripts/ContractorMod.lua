@@ -455,10 +455,15 @@ function ContractorMod:initFromParam()
             local workerStyle = PlayerStyle.new()
             if i < 2 then
               -- First character get configured style and name for new game
-              workerStyle = g_currentMission.player:getStyle()
+              if g_gameSettings.lastPlayerStyle ~= nil and g_gameSettings.lastPlayerStyle:isValid() then
+                workerStyle:copyFrom(g_gameSettings.lastPlayerStyle)
+              else
+                workerStyle = PlayerStyle.defaultStyle()
+              end
               workerName = g_currentMission.playerNickname
             else
               workerStyle:loadFromXMLFile(xmlFile, key .. ".style")
+              -- workerStyle:print()
             end
             if ContractorMod.debug then print(workerName) end
             local worker = ContractorModWorker:new(workerName, i, workerStyle)
