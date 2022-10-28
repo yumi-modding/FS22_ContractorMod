@@ -79,7 +79,7 @@ function ContractorMod:startMission()
       g_currentMission.player:setRotation(firstWorker.rotX, firstWorker.rotY)
       if firstWorker.currentVehicle ~= nil then
         -- firstWorker:afterSwitch()
-        firstWorker.ContractorMod.playerStyle:print()
+        --firstWorker.playerStyle:print()
         g_client:getServerConnection():sendEvent(VehicleEnterRequestEvent.new(firstWorker.currentVehicle, firstWorker.playerStyle, firstWorker.farmId));
       end
     end
